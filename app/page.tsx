@@ -19,6 +19,8 @@ export default function Home() {
 
   const sound = useRef<HTMLAudioElement | null>(null);
 
+  const [isSoundDisabled, setIsSoundDisabled] = useState(false);
+
   useEffect(() => {
     sound.current = new Audio("/sounds/myinstants.mp3");
   }, []);
@@ -82,7 +84,7 @@ export default function Home() {
         return;
       }
 
-      if (sound.current) {
+      if (sound.current && !isSoundDisabled) {
         sound.current.currentTime = 0;
         sound.current.play().catch(console.error);
       }
@@ -130,15 +132,21 @@ export default function Home() {
   return (
     <div
       className="
-        flex flex-col gap-25 h-full items-center text-center bg-color1 text-color2 [&_button]:cursor-pointer
+        flex flex-col px-20 gap-25 h-full w-full items-center text-center text-color2 [&_button]:cursor-pointer
         "
     >
-      <header className="flex gap-4 mt-4">
+      <header className="flex gap-8 mt-4 [&_button]:tracking-wide">
         <button
           className={`${isTestMode ? "text-green-500" : "text-red-500"}`}
           onClick={() => setIsTestMode((prev) => !prev)}
         >
           test mode
+        </button>
+        <button
+          className={`${isSoundDisabled ? "text-green-500" : "text-red-500"}`}
+          onClick={() => setIsSoundDisabled((prev) => !prev)}
+        >
+          disable sound
         </button>
       </header>
       <main>
