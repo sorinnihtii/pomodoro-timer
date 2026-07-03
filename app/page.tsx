@@ -132,7 +132,7 @@ export default function Home() {
   return (
     <div
       className="
-        flex flex-col px-20 gap-25 h-full w-full items-center text-center text-color2 [&_button]:cursor-pointer
+        flex flex-col px-[5%] gap-25 h-full w-full items-center text-center text-color2 [&_button]:cursor-pointer
         "
     >
       <header className="flex gap-8 mt-4 [&_button]:tracking-wide">
