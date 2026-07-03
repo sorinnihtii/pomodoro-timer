@@ -87,21 +87,6 @@ https://roadmap.sh/projects/pomodoro-timer
 
 ---
 
-## 💡 Future Improvements
-
-Some ideas I'd like to add in the future:
-
-- Dark / light theme
-- Keyboard shortcuts
-- Browser notifications
-- Progress ring animation
-- Session statistics
-- Daily focus history
-- Custom notification sounds
-- Accessibility improvements
-
----
-
 ## 📄 License
 
 This project is open source and available under the MIT License.
