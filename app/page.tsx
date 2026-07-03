@@ -33,18 +33,21 @@ export default function Home() {
     longBreak: 15,
   });
 
+  const [seconds, setSeconds] = useState(durations.work * 60);
+
   useEffect(() => {
     try {
-      const saved1 = localStorage.getItem("duration preferences");
-      const saved2 = localStorage.getItem("general preferences");
+      const savedDurations = localStorage.getItem("duration preferences");
+      if (savedDurations) {
+        const durationPreferences = JSON.parse(savedDurations);
+        setDurations(durationPreferences);
+      }
 
-      if (!saved1 || !saved2) return;
-
-      const durationPreferences = JSON.parse(saved1);
-      const generalPreferences = JSON.parse(saved2);
-
-      setDurations(durationPreferences);
-      setGeneralPreferences(generalPreferences);
+      const savedGeneral = localStorage.getItem("general preferences");
+      if (savedGeneral) {
+        const generalPreferences = JSON.parse(savedGeneral);
+        setGeneralPreferences(generalPreferences);
+      }
     } catch {
       console.error("Invalid saved preferences");
     }
@@ -65,8 +68,11 @@ export default function Home() {
       longBreak: durations.longBreak,
     };
     localStorage.setItem("duration preferences", JSON.stringify(item));
+  }, [durations]);
+
+  useEffect(() => { 
     if (!isStarted) setSeconds(durations.work * 60);
-  }, [durations, isStarted]);
+  }, [isStarted, durations]);
 
   useEffect(() => {
     const item = {
@@ -75,8 +81,6 @@ export default function Home() {
     };
     localStorage.setItem("general preferences", JSON.stringify(item));
   }, [generalPreferences]);
-
-  const [seconds, setSeconds] = useState(durations.work * 60);
 
   const resetTimer = () => {
     setIsRunning(false);
@@ -127,6 +131,7 @@ export default function Home() {
     sessionType,
     workSessionCount,
     timerSpeed,
+    generalPreferences,
   ]);
 
   let shownSeconds = seconds;
