@@ -14,12 +14,14 @@ export default function Home() {
   const [sessionType, setSessionType] = useState("work");
   const [workSessionCount, setWorkSessionCount] = useState(0);
 
-  const [isTestMode, setIsTestMode] = useState(false);
-  const timerSpeed = isTestMode ? 10 : 1000;
-
   const sound = useRef<HTMLAudioElement | null>(null);
 
-  const [isSoundDisabled, setIsSoundDisabled] = useState(false);
+  const [generalPreferences, setGeneralPreferences] = useState({
+    testMode: false,
+    disableSound: false,
+  });
+
+  const timerSpeed = generalPreferences.testMode ? 10 : 1000;
 
   useEffect(() => {
     sound.current = new Audio("/sounds/myinstants.mp3");
@@ -33,13 +35,16 @@ export default function Home() {
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("duration preferences");
+      const saved1 = localStorage.getItem("duration preferences");
+      const saved2 = localStorage.getItem("general preferences");
 
-      if (!saved) return;
+      if (!saved1 || !saved2) return;
 
-      const preferences = JSON.parse(saved);
+      const durationPreferences = JSON.parse(saved1);
+      const generalPreferences = JSON.parse(saved2);
 
-      setDurations(preferences);
+      setDurations(durationPreferences);
+      setGeneralPreferences(generalPreferences);
     } catch {
       console.error("Invalid saved preferences");
     }
@@ -54,16 +59,22 @@ export default function Home() {
   }
 
   useEffect(() => {
-    const durationPreferences = {
+    const item = {
       work: durations.work,
       shortBreak: durations.shortBreak,
       longBreak: durations.longBreak,
     };
-    localStorage.setItem(
-      "duration preferences",
-      JSON.stringify(durationPreferences),
-    );
-  }, [durations]);
+    localStorage.setItem("duration preferences", JSON.stringify(item));
+    if (!isStarted) setSeconds(durations.work * 60);
+  }, [durations, isStarted]);
+
+  useEffect(() => {
+    const item = {
+      testMode: generalPreferences.testMode,
+      disableSound: generalPreferences.disableSound,
+    };
+    localStorage.setItem("general preferences", JSON.stringify(item));
+  }, [generalPreferences]);
 
   const [seconds, setSeconds] = useState(durations.work * 60);
 
@@ -84,7 +95,7 @@ export default function Home() {
         return;
       }
 
-      if (sound.current && !isSoundDisabled) {
+      if (sound.current && !generalPreferences.disableSound) {
         sound.current.currentTime = 0;
         sound.current.play().catch(console.error);
       }
@@ -137,14 +148,26 @@ export default function Home() {
     >
       <header className="flex gap-8 mt-4 [&_button]:tracking-wide">
         <button
-          className={`${isTestMode ? "text-green-500" : "text-red-500"}`}
-          onClick={() => setIsTestMode((prev) => !prev)}
+          className={`${generalPreferences.testMode ? "text-green-500" : "text-red-500"}`}
+          onClick={() => {
+            const newValue = !generalPreferences.testMode;
+            setGeneralPreferences((prev) => ({
+              ...prev,
+              testMode: newValue,
+            }));
+          }}
         >
           test mode
         </button>
         <button
-          className={`${isSoundDisabled ? "text-green-500" : "text-red-500"}`}
-          onClick={() => setIsSoundDisabled((prev) => !prev)}
+          className={`${generalPreferences.disableSound ? "text-green-500" : "text-red-500"}`}
+          onClick={() => {
+            const newValue = !generalPreferences.disableSound;
+            setGeneralPreferences((prev) => ({
+              ...prev,
+              disableSound: newValue,
+            }));
+          }}
         >
           disable sound
         </button>
@@ -201,8 +224,6 @@ export default function Home() {
                 ...prev,
                 work: newValue,
               }));
-
-              if (!isStarted) setSeconds(newValue * 60);
             }}
           />
           <label htmlFor="shortBreakDuration">
