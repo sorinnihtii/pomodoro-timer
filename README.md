@@ -4,7 +4,7 @@ https://pomodoro-timer-lime-alpha.vercel.app/
 
 ## Description
 
-Simple pomodoro timer with customizable session length
+Simple pomodoro timer with customizable session length. Made with Next.js and Tailwindcss
 
 ## Preview
 
